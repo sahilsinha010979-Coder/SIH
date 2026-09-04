@@ -3,7 +3,7 @@ import re
 def parse_packaging_text(ocr_text_lines):
     full_text = " ".join(ocr_text_lines)
     
-    # Improved Regex Patterns
+    # Regex Patterns for extracting required fields
     patterns = {
         "mrp": r"(?:Rs\.?|MRP|₹)\s*(\d+(?:\.\d{1,2})?)",
         "net_quantity": r"(?i)(?:NET|VOL|QTY|WEIGHT)?\.?\s*(\d+\s*(?:ml|l|g|kg|pcs|n))\b",
