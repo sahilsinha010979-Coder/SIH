@@ -23,6 +23,7 @@ def run_pipeline(image_path):
             extracted_lines.extend(rec_texts)
 
     print("\nParsing Legal Metrology Compliance...")
+    print(extracted_lines)
     data = parse_packaging_text(extracted_lines)
     report = generate_compliance_report(data)
 
@@ -36,5 +37,5 @@ def run_pipeline(image_path):
     print("="*50)
 
 if __name__ == "__main__":
-    test_image_path = os.path.join("data", "sample1.jpeg")
+    test_image_path = os.path.join("data", "sample2.jpeg")
     run_pipeline(test_image_path)
