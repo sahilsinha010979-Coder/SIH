@@ -3,7 +3,7 @@ import re
 def parse_packaging_text(ocr_text_lines):
     full_text = " ".join(ocr_text_lines)
     
-    # Improved Regex Patterns for real-world packaging variations
+    # Regex Patterns for real-world packaging variations
     patterns = {
         # 1. Matches MRP attached to text OR standalone currency/price figures (e.g., 235.00, Rs 235, 249:00)
         "mrp": r"(?:M\.?R\.?P\.?|Rs\.?|₹|\bMRP\b)[\s\:\=]*[\(\)a-zA-Z\s]*(\d+(?:\.\d{1,2})?)|(?:\₹|Rs\.?)\s*(\d+(?:\.\d{1,2})?)|\b\d{2,4}[\:\.]\d{2}\b",

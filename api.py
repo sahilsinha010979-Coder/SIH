@@ -5,7 +5,7 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from paddleocr import PaddleOCR
 
-# Import your existing compliance logic
+# Import our existing compliance logic
 from src.regex_parser import parse_packaging_text, generate_compliance_report
 
 os.environ['FLAGS_use_mkldnn'] = '0'
@@ -16,7 +16,7 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# Enable CORS so your frontend team (React/Streamlit/Mobile) can call this API
+# Enable CORS so that our frontend team (React/Streamlit/Mobile) can call this API
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
