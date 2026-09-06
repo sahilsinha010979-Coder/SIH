@@ -37,5 +37,5 @@ def run_pipeline(image_path):
     print("="*50)
 
 if __name__ == "__main__":
-    test_image_path = os.path.join("data", "sample2.jpeg")
+    test_image_path = os.path.join("data", "sample1.jpeg")
     run_pipeline(test_image_path)
