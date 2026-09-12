@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Metrology Compliance Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+        .card { border: 1px solid #ccc; border-radius: 8px; padding: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        button { background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; }
+        button:disabled { background-color: #cccccc; }
+        pre { background: #f4f4f4; padding: 15px; border-radius: 5px; overflow-x: auto; }
+        .status { font-weight: bold; padding: 5px 10px; border-radius: 4px; display: inline-block; }
+        .status.COMPLIANT { background-color: #d4edda; color: #155724; }
+        .status.NON-COMPLIANT { background-color: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Legal Metrology Compliance Inspector</h2>
+        <div class="form-group">
+            <label for="imageInput"><strong>Select Packaging Image:</strong></label><br><br>
+            <input type="file" id="imageInput" accept="image/*">
+        </div>
+        <button id="uploadBtn" onclick="inspectImage()">Analyze Package</button>
+
+        <div id="loading" style="display: none; margin-top: 15px;">
+            ⏳ Processing image with PaddleOCR... Please wait.
+        </div>
+
+        <div id="results" style="display: none; margin-top: 20px;">
+            <h3>Inspection Summary</h3>
+            <p><strong>Status:</strong> <span id="statusBadge" class="status"></span></p>
+            
+            <h4>Extracted Fields:</h4>
+            <pre id="extractedFields"></pre>
+
+            <h4>Violations:</h4>
+            <pre id="violations"></pre>
+        </div>
+    </div>
+
+    <script>
+        async function inspectImage() {
+            const fileInput = document.getElementById('imageInput');
+            const uploadBtn = document.getElementById('uploadBtn');
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+
+            if (!fileInput.files[0]) {
+                alert("Please select an image first!");
+                return;
+            }
+
+            // 1. Prepare form data payload
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            // Update UI state
+            uploadBtn.disabled = true;
+            loadingDiv.style.display = 'block';
+            resultsDiv.style.display = 'none';
+
+            try {
+                // 2. Connect to local FastAPI backend via HTTP POST request
+                const response = await fetch('/api/v1/inspect', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}`);
+                }
+
+                // 3. Parse JSON response from backend
+                const data = await response.json();
+
+                // 4. Update webpage elements dynamically
+                document.getElementById('statusBadge').innerText = data.compliance_status;
+                document.getElementById('statusBadge').className = `status ${data.compliance_status}`;
+                
+                document.getElementById('extractedFields').innerText = JSON.stringify(data.extracted_fields, null, 2);
+                document.getElementById('violations').innerText = JSON.stringify(data.violations, null, 2);
+
+                resultsDiv.style.display = 'block';
+
+            } catch (error) {
+                alert("Failed to connect to API: " + error.message);
+            } finally {
+                uploadBtn.disabled = false;
+                loadingDiv.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -5,6 +5,8 @@ from fastapi import FastAPI, File, UploadFile, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from paddleocr import PaddleOCR
 from sqlalchemy.orm import Session
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from src.regex_parser import parse_packaging_text, generate_compliance_report
 from database import InspectionLog, get_db
@@ -39,10 +41,10 @@ def load_model():
     print("PaddleOCR model ready!")
 
 
+app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
-def health_check():
-    return {"status": "healthy", "service": "Legal Metrology Compliance Engine API"}
-
+def serve_ui():
+    return FileResponse("static/index.html")
 
 @app.post("/api/v1/inspect")
 async def inspect_packaging(
